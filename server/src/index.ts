@@ -8,7 +8,12 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "../../build")));
+
+app.get("/", (_, res) => {
+  console.log("ello");
+  res.sendFile(path.join(__dirname, "../../build/index.html"));
+});
 
 app.get("/search", async (req, res) => {
   const query = req.query.q?.toString();
@@ -20,7 +25,7 @@ app.get("/search", async (req, res) => {
       "utf8"
     );
     if (query !== undefined && file.includes(query)) {
-      result.push(file)
+      result.push(file);
     }
   }
   res.send(result);

@@ -46,7 +46,11 @@ var cors_1 = __importDefault(require("cors"));
 var app = express_1.default();
 app.use(express_1.default.json());
 app.use(cors_1.default());
-app.use(express_1.default.static(path_1.default.join(__dirname, "build")));
+app.use(express_1.default.static(path_1.default.join(__dirname, "../../build")));
+app.get("/", function (_, res) {
+    console.log("ello");
+    res.sendFile(path_1.default.join(__dirname, "../../build/index.html"));
+});
 app.get("/search", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var query, files, result, _i, files_1, fileName, file;
     var _a;
