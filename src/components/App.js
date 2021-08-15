@@ -1,9 +1,20 @@
 import { useState } from "react";
+import axios from "axios";
+axios.defaults.baseURL = "http://localhost:4000";
 
 export default function App() {
   const [input, setInput] = useState("");
+  const [results, setResults] = useState([]);
 
-  async function handleSubmit() {}
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const { data } = await axios.get(`/search?q=${input}`);
+      setResults(data);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <div>
@@ -14,6 +25,16 @@ export default function App() {
       <button type="submit" onClick={handleSubmit}>
         submit
       </button>
+      {results.map((result) => (
+        <p>
+          {result.split("\n").map((line) => (
+            <div>
+              {line}
+              <br />
+            </div>
+          ))}
+        </p>
+      ))}
     </div>
   );
 }
