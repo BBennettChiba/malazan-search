@@ -2,33 +2,28 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { compile } from "html-to-text";
-
-const convert = compile({ wordwrap: null });
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use(express.static(path.join(__dirname, "build")));
 
-app.get("/search", async (_, res) => {
-  const files = fs.readdirSync(path.join(__dirname, "../../assets/OEBPS/Text"));
-  console.log(files);
-  for (const file of files) {
-    const html = fs.readFileSync(
-      path.join(__dirname, `../../assets/OEBPS/Text/${file}`),
+app.get("/search", async (req, res) => {
+  const query = req.query.q?.toString();
+  const files = fs.readdirSync(path.join(__dirname, "../../assets/converts"));
+  const result = [];
+  for (const fileName of files) {
+    const file = fs.readFileSync(
+      path.join(__dirname, `../../assets/converts/${fileName}`),
       "utf8"
     );
-    const text: string = convert(html);
-    fs.writeFileSync(
-      path.join(
-        __dirname,
-        `../../assets/converts/${file.replace(".html", "")}.txt`
-      ),
-      text
-    );
+    if (query !== undefined && file.includes(query)) {
+      result.push(file)
+    }
   }
-  res.send("hello");
+  res.send(result);
 });
 
 app.listen(4000, () => {

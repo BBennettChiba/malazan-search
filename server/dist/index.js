@@ -42,23 +42,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
-var html_to_text_1 = require("html-to-text");
-var convert = html_to_text_1.compile({ wordwrap: null });
+var cors_1 = __importDefault(require("cors"));
 var app = express_1.default();
 app.use(express_1.default.json());
+app.use(cors_1.default());
 app.use(express_1.default.static(path_1.default.join(__dirname, "build")));
-app.get("/search", function (_, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var files, _i, files_1, file, html, text;
-    return __generator(this, function (_a) {
-        files = fs_1.default.readdirSync(path_1.default.join(__dirname, "../../assets/OEBPS/Text"));
-        console.log(files);
+app.get("/search", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, files, result, _i, files_1, fileName, file;
+    var _a;
+    return __generator(this, function (_b) {
+        query = (_a = req.query.q) === null || _a === void 0 ? void 0 : _a.toString();
+        files = fs_1.default.readdirSync(path_1.default.join(__dirname, "../../assets/converts"));
+        result = [];
         for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
-            file = files_1[_i];
-            html = fs_1.default.readFileSync(path_1.default.join(__dirname, "../../assets/OEBPS/Text/" + file), "utf8");
-            text = convert(html);
-            fs_1.default.writeFileSync(path_1.default.join(__dirname, "../../assets/converts/" + file.replace(".html", "") + ".txt"), text);
+            fileName = files_1[_i];
+            file = fs_1.default.readFileSync(path_1.default.join(__dirname, "../../assets/converts/" + fileName), "utf8");
+            if (query !== undefined && file.includes(query)) {
+                result.push(file);
+            }
         }
-        res.send("hello");
+        res.send(result);
         return [2];
     });
 }); });
