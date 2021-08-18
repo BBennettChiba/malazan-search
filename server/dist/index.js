@@ -44,23 +44,24 @@ var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
 var app = express_1.default();
 app.use(express_1.default.json());
-app.use(express_1.default.static(path_1.default.join(__dirname, "../../build")));
+app.use(express_1.default.static(path_1.default.join(__dirname, "../../front/build")));
 app.get("/", function (_, res) {
-    console.log("ello");
-    res.sendFile(path_1.default.join(__dirname, "../../build/index.html"));
+    res.sendFile(path_1.default.join(__dirname, "../../front/build/index.html"));
 });
 app.get("/search", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, files, result, _i, files_1, fileName, file;
+    var query, files, result, _i, files_1, fileName, file, separatedByBreak, included;
     var _a;
     return __generator(this, function (_b) {
-        query = (_a = req.query.q) === null || _a === void 0 ? void 0 : _a.toString();
+        query = (_a = req.query["q"]) === null || _a === void 0 ? void 0 : _a.toString();
         files = fs_1.default.readdirSync(path_1.default.join(__dirname, "../../assets/converts"));
         result = [];
         for (_i = 0, files_1 = files; _i < files_1.length; _i++) {
             fileName = files_1[_i];
             file = fs_1.default.readFileSync(path_1.default.join(__dirname, "../../assets/converts/" + fileName), "utf8");
             if (query !== undefined && file.includes(query)) {
-                result.push(file);
+                separatedByBreak = file.split("\n");
+                included = separatedByBreak.filter(function (a) { return a.includes(query); });
+                result.push(included);
             }
         }
         res.send(result);

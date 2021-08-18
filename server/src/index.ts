@@ -1,22 +1,22 @@
-// require("dotenv").config();
+// import { config } from "dotenv";
 import express from "express";
 import path from "path";
 import fs from "fs";
 // import cors from "cors";
 
 const app = express();
+// config();
 
 app.use(express.json());
 // app.use(cors());
-app.use(express.static(path.join(__dirname, "../../build")));
+app.use(express.static(path.join(__dirname, "../../front/build")));
 
 app.get("/", (_, res) => {
-  console.log("ello");
-  res.sendFile(path.join(__dirname, "../../build/index.html"));
+  res.sendFile(path.join(__dirname, "../../front/build/index.html"));
 });
 
 app.get("/search", async (req, res) => {
-  const query = req.query.q?.toString();
+  const query = req.query["q"]?.toString();
   const files = fs.readdirSync(path.join(__dirname, "../../assets/converts"));
   const result = [];
   for (const fileName of files) {
@@ -25,7 +25,9 @@ app.get("/search", async (req, res) => {
       "utf8"
     );
     if (query !== undefined && file.includes(query)) {
-      result.push(file);
+      const separatedByBreak = file.split("\n");
+      const included = separatedByBreak.filter((a) => a.includes(query));
+      result.push(included);
     }
   }
   res.send(result);

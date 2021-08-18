@@ -4,7 +4,7 @@ import { compile } from "html-to-text";
 
 const convert = compile({ wordwrap: null });
 
-function writeFiles() {
+function writeFiles(): void {
   let files: string[] = fs.readdirSync(
     path.join(__dirname, "../../assets/OEBPS/Text")
   );
