@@ -17,6 +17,7 @@ app.get("/", (_, res) => {
 
 app.get("/search", async (req, res) => {
   const query = req.query["q"]?.toString();
+  if(!query) return res.status(400).send("No query provided");
   const files = fs.readdirSync(path.join(__dirname, "../../assets/converts"));
   const result = [];
   for (const fileName of files) {
@@ -24,7 +25,7 @@ app.get("/search", async (req, res) => {
       path.join(__dirname, `../../assets/converts/${fileName}`),
       "utf8"
     );
-    if (query !== undefined && file.includes(query)) {
+    if (file.includes(query)) {
       const separatedByBreak = file.split("\n");
       const included = separatedByBreak.filter((a) => a.includes(query));
       result.push(included);
